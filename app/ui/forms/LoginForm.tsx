@@ -26,23 +26,23 @@ export default function LoginForm() {
         event.preventDefault();
         try {
             const response = await axios.post('http://localhost:4000/api/auth/login', data);
-            // const value = await response.data;
-            // if (value.access_token) {
-            //     setError('');
-            //     localStorage.setItem("accessToken", value.access_token);
-            //     // setSubmitting(false);
-            //     // redirect
-            //     router.push('/contacts');
-            //     return true;
-            // } else {
-            //     // setSubmitting(false);
-            //     setError('Incorrect Credentials');
-            //     // Clear password field
-            //     const usernameInput = document.getElementById('email') as HTMLInputElement | null;
-            //     if (usernameInput) {
-            //         usernameInput.focus();
-            //     }
-            // }
+            const value = await response.data;
+            if (value.access_token) {
+                setError('');
+                localStorage.setItem("accessToken", value.access_token);
+                // setSubmitting(false);
+                // redirect
+                router.push('/contacts');
+                return true;
+            } else {
+                // setSubmitting(false);
+                setError('Incorrect Credentials');
+                // Clear password field
+                const usernameInput = document.getElementById('email') as HTMLInputElement | null;
+                if (usernameInput) {
+                    usernameInput.focus();
+                }
+            }
 
         } catch (error: any) {
             // If an error occurs during form submission, set the error message

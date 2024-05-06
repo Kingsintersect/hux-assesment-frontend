@@ -17,47 +17,47 @@ type Contacts = {
 const ContactListTable = () => {
     const [contacts, setContacts] = useState<Contacts[] | null>();
     const { accessToken, setAccessToken } = useAccessToken();
-    // const [pageStatus, setpageStatus] = useState('');
     const [error, setError] = useState('');
     const router = useRouter();
 
     useEffect(() => {
         const fetchContacts = async () => {
-            console.log(accessToken, "heree")
-            try {
-                const response = await axios.get('http://localhost:4000/api/contacts', {
-                    headers: {
-                        'Authorization': `Bearer ${accessToken}`
+            const token = accessToken
+            if (token) {
+                try {
+                    const response = await axios.get('http://localhost:4000/api/contacts', {
+                        headers: {
+                            'Authorization': `Bearer ${accessToken}`
+                        }
+                    });
+                    if (response.status >= 200 && response.status < 300) {
+                        setError('');
+                        console.log('Response data:', response.data);
+                        setContacts(response.data);
+                    } else {
+                        setError(response.data.message)
+                        console.error('Request failed with status code:', response.status);
                     }
-                });
-                if (response.status >= 200 && response.status < 300) {
-                    console.log('Response data:', response.data);
-                    setContacts(response.data);
-                } else {
-                    setError("Request failed")
-                    console.error('Request failed with status code:', response.status);
+                } catch (error) {
+                    console.error('Error fetching contacts:', error);
+                    setError('Token is invalid. Please log in again.');
+                    router.push('/login');
                 }
-            } catch (error) {
-                console.error('Error fetching contacts:', error);
-                setError('Token is invalid. Please log in again.');
-                // Redirect to login page
-                setTimeout(() => {
-                    // router.push('/login');
-                }, 1000);
+            } else {
+                setError('No token found.');
             }
+
         };
 
-        // if (accessToken) {
         fetchContacts();
-        // }
-    }, [router, accessToken]);
-
+    }, [accessToken]);
 
     return (
         <div className='py-20'>
             <header className='text-center'>
                 <h1 className={`${lusitana.className} text-2xl mb-3`}>Lists Of Your Contacts</h1>
                 <p>This route is ContactsPage. Only accessible when logged in.</p>
+                {error && <p style={{ color: 'red' }}>{error}</p>}
             </header>
 
             <div className='overflow-hidden mt-10'>
