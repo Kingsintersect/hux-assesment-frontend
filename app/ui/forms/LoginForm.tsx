@@ -1,6 +1,5 @@
 'use client';
 
-import { lusitana } from '@/app/ui/fonts';
 import { ArrowRightIcon } from '@heroicons/react/20/solid';
 import { Button } from '../buton';
 import { useFormStatus } from 'react-dom';
@@ -27,10 +26,10 @@ export default function LoginForm() {
         event.preventDefault();
         try {
             const response = await axios.post('http://localhost:4000/api/auth/login', data);
-            const value = await response.data; console.log(value.acce)
+            const value = await response.data;
             if (value.access_token) {
                 setError('');
-                localStorage.setItem("access_token", value.access_token);
+                localStorage.setItem("accessToken", value.access_token);
                 // setSubmitting(false);
                 // redirect
                 router.push('/contacts');
@@ -72,6 +71,7 @@ export default function LoginForm() {
             </div>
             {error && <p style={{ color: 'red' }}>{error}</p>}
             <LoginButton />
+
             <p className="text-sm font-light text-gray-500 dark:text-gray-400">
                 Don’t have an account yet? <a href="/register" className="font-medium text-primary-600 hover:underline dark:text-blue-500">Sign up</a>
             </p>
@@ -79,12 +79,12 @@ export default function LoginForm() {
     );
 }
 
-function LoginButton() {
+function LoginButton({ value = "Log In" }: { value?: string }) {
     const { pending } = useFormStatus();
 
     return (
         <Button className="mt-4 w-full" aria-disabled={pending}>
-            Log in <ArrowRightIcon className="ml-auto h-5 w-5 text-gray-50" />
+            {value} <ArrowRightIcon className="ml-auto h-5 w-5 text-gray-50" />
         </Button>
     );
 }

@@ -13,8 +13,7 @@ const triggerMenu = () => {
     });
 }
 const Navigation = () => {
-    const isLoggedIn = false;
-
+    const [isLoggedIn, setIsLoggedIn] = useState(false);
     const [isOpen, setIsOpen] = useState(false);
     const menuRef = useRef<HTMLDivElement>(null);
 
@@ -35,10 +34,17 @@ const Navigation = () => {
 
     // Attach click event listener to the document to handle clicks outside the menu
     useEffect(() => {
+        // Checking if running in the browser
+        if (typeof window !== 'undefined') {
+            const accessToken = localStorage.getItem('accessToken');
+            setIsLoggedIn(!!accessToken);
+        }
+
         document.addEventListener('mousedown', handleClickOutside);
         return () => {
             document.removeEventListener('mousedown', handleClickOutside);
         };
+
     }, []);
 
 
