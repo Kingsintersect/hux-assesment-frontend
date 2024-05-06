@@ -5,7 +5,10 @@ import "./globals.css";
 const inter = Inter({ subsets: ["latin"] });
 
 export const metadata: Metadata = {
-  title: "HUX Contact Registry",
+  title: {
+    template: '%s | HUX Contact Registry',
+    default: 'HUX Contact Registry',
+  },
   description: "Create and manage contact informations",
 };
 

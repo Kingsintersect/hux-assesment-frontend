@@ -57,15 +57,13 @@ const Navigation = () => {
                 <ul className="hidden md:flex space-x-4">
                     {isLoggedIn ? (
                         <>
-                            <li><a href="/login" className="">Sign In</a></li>
-                            <li><a href="/register" className="">Create An Account</a></li>
-
+                            <li><a href="/contacts" className="">My Contacts</a></li>
+                            <li><a href="/logout" className="">Logout</a></li>
                         </>
                     ) : (
                         <>
-                            <li><a href="/contacts" className="">My Contacts</a></li>
-                            <li><a href="/logout" className="">Logout</a></li>
-
+                            <li><a href="/login" className="">Sign In</a></li>
+                            <li><a href="/register" className="">Create An Account</a></li>
                         </>
                     )}
 
@@ -76,15 +74,13 @@ const Navigation = () => {
                 <ul className="flex flex-col items-center justify-center h-full space-y-4">
                     {isLoggedIn ? (
                         <>
-                            <li><a href="/login" className="">Sign In</a></li>
-                            <li><a href="/register" className="">Create An Account</a></li>
-
+                            <li><a href="/contacts" className="">My Contacts</a></li>
+                            <li><a href="/logout" className="">Logout</a></li>
                         </>
                     ) : (
                         <>
-                            <li><a href="/contacts" className="">My Contacts</a></li>
-                            <li><a href="/logout" className="">Logout</a></li>
-
+                            <li><a href="/login" className="">Sign In</a></li>
+                            <li><a href="/register" className="text-blue">Create An Account</a></li>
                         </>
                     )}
                 </ul>
