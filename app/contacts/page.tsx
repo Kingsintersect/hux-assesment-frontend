@@ -4,8 +4,6 @@ import { InvoicesTableSkeleton } from "../ui/skeletons";
 
 
 const ContactsPage = () => {
-
-
     return (
         <>
             <section className="bg-gray-50 dark:bg-gray-900">

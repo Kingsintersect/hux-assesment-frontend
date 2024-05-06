@@ -1,24 +1,57 @@
 'use client';
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
-import { PencilIcon, PlusIcon, TrashIcon } from '@heroicons/react/24/outline';
 import Search from '../contacts/Search';
 import { CreateContact, DeleteContact, UpdateContact, } from '../contacts/buttons';
 import { lusitana } from '../fonts';
 import { CheckLogin } from '@/app/actions/action';
+import { useAccessToken } from '@/app/actions/accessTokenContext';
+import axios from 'axios';
 
-
+type Contacts = {
+    _id: string,
+    firstName: string,
+    lastName: string,
+    phoneNumber: string
+}
 const ContactListTable = () => {
-    const api = 'http://localhost:4000/api/contacts/6638b67f5155c9c0ac408353'
-    CheckLogin()
+    const [contacts, setContacts] = useState<Contacts[] | null>();
+    const { accessToken, setAccessToken } = useAccessToken();
+    // const [pageStatus, setpageStatus] = useState('');
+    const [error, setError] = useState('');
+    const router = useRouter();
 
-    const handleEdit = () => {
+    useEffect(() => {
+        const fetchContacts = async () => {
+            console.log(accessToken, "heree")
+            try {
+                const response = await axios.get('http://localhost:4000/api/contacts', {
+                    headers: {
+                        'Authorization': `Bearer ${accessToken}`
+                    }
+                });
+                if (response.status >= 200 && response.status < 300) {
+                    console.log('Response data:', response.data);
+                    setContacts(response.data);
+                } else {
+                    setError("Request failed")
+                    console.error('Request failed with status code:', response.status);
+                }
+            } catch (error) {
+                console.error('Error fetching contacts:', error);
+                setError('Token is invalid. Please log in again.');
+                // Redirect to login page
+                setTimeout(() => {
+                    // router.push('/login');
+                }, 1000);
+            }
+        };
 
-    }
+        // if (accessToken) {
+        fetchContacts();
+        // }
+    }, [router, accessToken]);
 
-    const handleDelete = () => {
-
-    }
 
     return (
         <div className='py-20'>
@@ -51,51 +84,23 @@ const ContactListTable = () => {
                             </tr>
                         </thead>
                         <tbody>
-                            <tr className="bg-white border-b dark:bg-gray-800 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600">
-                                <th scope="row" className="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white">
-                                    Apple MacBook Pro 17"
-                                </th>
-                                <td className="px-6 py-4">
-                                    Silver
-                                </td>
-                                <td className="px-6 py-4">
-                                    Laptop
-                                </td>
-                                <td className="px-6 py-4 text-right">
-                                    <a href="id-131131dcwew/edit" className="font-medium text-blue-600 dark:text-blue-500 hover:underline mx-1">Edit</a>
-                                    <a href="id-31878637oihc" className="font-medium text-red-600 dark:text-red-500 hover:underline mx-1">Delete</a>
-                                </td>
-                            </tr>
-                            <tr className="bg-white border-b dark:bg-gray-800 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600">
-                                <th scope="row" className="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white">
-                                    Microsoft Surface Pro
-                                </th>
-                                <td className="px-6 py-4">
-                                    White
-                                </td>
-                                <td className="px-6 py-4">
-                                    Laptop PC
-                                </td>
-                                <td className="flex justify-center items-center gap-5 pt-2">
-                                    <UpdateContact id={`${"123456789"}`} />
-                                    <DeleteContact id={`${"123456789"}`} />
-                                </td>
-                            </tr>
-                            <tr className="bg-white dark:bg-gray-800 hover:bg-gray-50 dark:hover:bg-gray-600">
-                                <th scope="row" className="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white">
-                                    Magic Mouse 2
-                                </th>
-                                <td className="px-6 py-4">
-                                    Black
-                                </td>
-                                <td className="px-6 py-4">
-                                    Accessories
-                                </td>
-                                <td className="px-6 py-4 text-right">
-                                    <a href="id-131131dcwew/edit" className="font-medium text-blue-600 dark:text-blue-500 hover:underline mx-1">Edit</a>
-                                    <a href="id-31878637oihc" className="font-medium text-red-600 dark:text-red-500 hover:underline mx-1">Delete</a>
-                                </td>
-                            </tr>
+                            {contacts?.map((contact) => (
+                                <tr key={contact._id} className="bg-white border-b dark:bg-gray-800 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600">
+                                    <th scope="row" className="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white">
+                                        {contact.firstName}
+                                    </th>
+                                    <td className="px-6 py-4">
+                                        {contact.lastName}
+                                    </td>
+                                    <td className="px-6 py-4">
+                                        {contact.phoneNumber}
+                                    </td>
+                                    <td className="flex justify-center items-center gap-5 pt-2">
+                                        <UpdateContact id={`${"123456789"}`} />
+                                        <DeleteContact id={`${"123456789"}`} />
+                                    </td>
+                                </tr>
+                            ))}
                         </tbody>
                     </table>
                 </div>

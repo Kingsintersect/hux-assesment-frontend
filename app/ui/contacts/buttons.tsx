@@ -14,6 +14,10 @@ export function CreateContact() {
 }
 
 export function UpdateContact({ id }: { id: string }) {
+    const handleUpdate = () => {
+
+    }
+
     return (
         <Link
             href={`/contacts/${id}/edit`} className="rounded-md border p-1 hover:bg-gray-100"
@@ -25,6 +29,9 @@ export function UpdateContact({ id }: { id: string }) {
 
 export function DeleteContact({ id }: { id: string }) {
 
+    const handleDelete = () => {
+
+    }
     return (
         <form action={"deleteContact"}>
             <button className="rounded-md border p-1 hover:bg-gray-100">
