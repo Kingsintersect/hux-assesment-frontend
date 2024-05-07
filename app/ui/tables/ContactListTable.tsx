@@ -4,26 +4,20 @@ import { useRouter } from 'next/navigation';
 import Search from '../contacts/Search';
 import { CreateContact, DeleteContact, UpdateContact, } from '../contacts/buttons';
 import { lusitana } from '../fonts';
-import { CheckLogin } from '@/app/actions/action';
 import { useAccessToken } from '@/app/actions/accessTokenContext';
 import axios from 'axios';
+import { Contact } from '@/app/actions/Types';
 
-type Contacts = {
-    _id: string,
-    firstName: string,
-    lastName: string,
-    phoneNumber: string
-}
+
 const ContactListTable = () => {
-    const [contacts, setContacts] = useState<Contacts[] | null>();
+    const [contacts, setContacts] = useState<Contact[] | null>();
     const { accessToken, setAccessToken } = useAccessToken();
     const [error, setError] = useState('');
     const router = useRouter();
 
     useEffect(() => {
         const fetchContacts = async () => {
-            const token = accessToken
-            if (token) {
+            if (accessToken) {
                 try {
                     const response = await axios.get('http://localhost:4000/api/contacts', {
                         headers: {
@@ -32,14 +26,11 @@ const ContactListTable = () => {
                     });
                     if (response.status >= 200 && response.status < 300) {
                         setError('');
-                        console.log('Response data:', response.data);
                         setContacts(response.data);
                     } else {
                         setError(response.data.message)
-                        console.error('Request failed with status code:', response.status);
                     }
                 } catch (error) {
-                    console.error('Error fetching contacts:', error);
                     setError('Token is invalid. Please log in again.');
                     router.push('/login');
                 }
@@ -96,8 +87,8 @@ const ContactListTable = () => {
                                         {contact.phoneNumber}
                                     </td>
                                     <td className="flex justify-center items-center gap-5 pt-2">
-                                        <UpdateContact id={`${"123456789"}`} />
-                                        <DeleteContact id={`${"123456789"}`} />
+                                        <UpdateContact id={contact._id} />
+                                        <DeleteContact id={contact._id} />
                                     </td>
                                 </tr>
                             ))}

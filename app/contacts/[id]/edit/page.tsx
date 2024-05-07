@@ -6,7 +6,7 @@ export const metadata: Metadata = {
     title: 'Edit Contact',
 };
 
-const EditContactPage = ({ params }: { params: { id: string } }) => {
+const EditContactPage = async ({ params }: { params: { id: string } }) => {
     const id = params.id;
 
     return (
@@ -16,12 +16,12 @@ const EditContactPage = ({ params }: { params: { id: string } }) => {
                     { label: 'contacts', href: '/contacts' },
                     {
                         label: 'Edit Contact',
-                        href: `/contacts/${"id"}/edit`,
+                        href: `/contacts/${id}/edit`,
                         active: true,
                     },
                 ]}
             />
-            <EditContactForm contact={"invoice"} customers={[]} />
+            <EditContactForm contactId={id} />
         </main>
     )
 }

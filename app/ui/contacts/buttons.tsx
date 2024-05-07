@@ -34,9 +34,9 @@ export function DeleteContact({ id }: { id: string }) {
     }
     return (
         <form action={"deleteContact"}>
-            <button className="rounded-md border p-1 hover:bg-gray-100">
+            <button className="rounded-md border border-red-500 p-1 hover:bg-gray-100">
                 <span className="sr-only">Delete</span>
-                <TrashIcon className="w-5" />
+                <TrashIcon className="w-5 text-red-500" />
             </button>
         </form>
     );
