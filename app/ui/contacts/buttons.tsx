@@ -1,5 +1,3 @@
-import { deleteContactRequest } from '@/app/actions/action';
-import { getToken } from '@/app/actions/auth';
 import { PencilIcon, PlusIcon, TrashIcon } from '@heroicons/react/24/outline';
 import Link from 'next/link';
 

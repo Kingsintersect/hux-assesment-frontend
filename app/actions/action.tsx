@@ -1,5 +1,3 @@
-'use client';
-
 import axios from "axios";
 
 export const getSingleUserRequest = async (id: string, accessToken: string) => {

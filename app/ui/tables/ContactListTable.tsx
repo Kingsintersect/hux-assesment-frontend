@@ -29,7 +29,7 @@ const ContactListTable = () => {
                     });
                     if (response.status >= 200 && response.status < 300) {
                         setError('');
-                        setContacts(response.data); console.log(response.data)
+                        setContacts(response.data);
                     } else {
                         setError(response.data.message)
                     }

@@ -1,5 +1,5 @@
 import Breadcrumbs from "@/app/ui/breadcrumbs";
-import EditContactForm from "@/app/ui/contacts/EditForm";
+import EditContactForm from "@/app/ui/contacts/EditContactForm";
 import { Metadata } from "next";
 
 export const metadata: Metadata = {
