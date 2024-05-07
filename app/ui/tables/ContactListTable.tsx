@@ -7,10 +7,13 @@ import { lusitana } from '../fonts';
 import { useAccessToken } from '@/app/actions/accessTokenContext';
 import axios from 'axios';
 import { Contact } from '@/app/actions/Types';
+import { deleteContactRequest } from '@/app/actions/action';
+import { deleteToken, getToken } from '@/app/actions/auth';
 
 
 const ContactListTable = () => {
-    const [contacts, setContacts] = useState<Contact[] | null>();
+    const [isLoading, setIsLoading] = useState<boolean>(false);
+    const [contacts, setContacts] = useState<Contact[]>([]);
     const { accessToken, setAccessToken } = useAccessToken();
     const [error, setError] = useState('');
     const router = useRouter();
@@ -26,7 +29,7 @@ const ContactListTable = () => {
                     });
                     if (response.status >= 200 && response.status < 300) {
                         setError('');
-                        setContacts(response.data);
+                        setContacts(response.data); console.log(response.data)
                     } else {
                         setError(response.data.message)
                     }
@@ -42,6 +45,20 @@ const ContactListTable = () => {
 
         fetchContacts();
     }, [accessToken]);
+
+    const handleDelete = async (id: string) => {
+        setIsLoading(true);
+        try {
+            const accessToken = getToken();
+            if (!accessToken) throw new Error("Access token not found!")
+            const result = await deleteContactRequest(id, accessToken);
+            if (result.success) setError(''), setContacts(prevContacts => prevContacts.filter(contact => contact._id !== id));
+        } catch (error) {
+            setError("Internal Server Problem")
+        } finally {
+            setIsLoading(false);
+        }
+    }
 
     return (
         <div className='py-20'>
@@ -88,7 +105,7 @@ const ContactListTable = () => {
                                     </td>
                                     <td className="flex justify-center items-center gap-5 pt-2">
                                         <UpdateContact id={contact._id} />
-                                        <DeleteContact id={contact._id} />
+                                        <DeleteContact isLoading={isLoading} handleDelete={handleDelete} id={contact._id} />
                                     </td>
                                 </tr>
                             ))}

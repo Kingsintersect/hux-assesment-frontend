@@ -51,8 +51,11 @@ To logout, simply click on the logout button
 
 
 ## Technologies Used
-NextJS
-TailwindCSS
+NextJS -> the fronend framework
+TailwindCSS -> styling hte application
+Yup -> for validating form imputs before making a request
+Axios -> fetching making API requests to the backend
+
 
 ## Learn More
 

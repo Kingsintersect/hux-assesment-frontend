@@ -1,3 +1,5 @@
+import { deleteContactRequest } from '@/app/actions/action';
+import { getToken } from '@/app/actions/auth';
 import { PencilIcon, PlusIcon, TrashIcon } from '@heroicons/react/24/outline';
 import Link from 'next/link';
 
@@ -14,10 +16,6 @@ export function CreateContact() {
 }
 
 export function UpdateContact({ id }: { id: string }) {
-    const handleUpdate = () => {
-
-    }
-
     return (
         <Link
             href={`/contacts/${id}/edit`} className="rounded-md border p-1 hover:bg-gray-100"
@@ -27,17 +25,11 @@ export function UpdateContact({ id }: { id: string }) {
     );
 }
 
-export function DeleteContact({ id }: { id: string }) {
-
-    const handleDelete = () => {
-
-    }
+export function DeleteContact({ isLoading, handleDelete, id }: { isLoading: boolean, handleDelete: (id: string) => void, id: string }) {
     return (
-        <form action={"deleteContact"}>
-            <button className="rounded-md border border-red-500 p-1 hover:bg-gray-100">
-                <span className="sr-only">Delete</span>
-                <TrashIcon className="w-5 text-red-500" />
-            </button>
-        </form>
+        <button onClick={() => handleDelete(id)} disabled={isLoading} className="rounded-md border border-red-500 p-1 hover:bg-gray-100">
+            <span className="sr-only">Delete</span>
+            <TrashIcon className="w-5 text-red-500" />
+        </button>
     );
 }
