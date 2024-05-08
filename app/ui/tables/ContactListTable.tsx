@@ -77,14 +77,14 @@ const ContactListTable = () => {
 
     return (
         <>
-            <div className='space-y-4 md:space-y-6'>
+            <div className=''>
                 <header className='text-center'>
                     <h1 className={`${lusitana.className} text-2xl mb-3 text-orange-300`}>Lists Of Your Contacts</h1>
-                    <p className='text-orange-100'>Manage your contact informations.</p>
+                    <p className='text-orange-100'>This route is ContactsPage. Only accessible when logged in.</p>
                     {error && <p className='text-red-400 mt-5'>{error}</p>}
                 </header>
 
-                <div className='overflow-hidden'>
+                <div className='overflow-hidden mt-10'>
                     <div className="relative overflow-x-auto shadow-md sm:rounded-lg">
                         <div className='flex flex-column sm:flex-row flex-wrap space-y-4 sm:space-y-0 items-center justify-between pb-4 mb-5'>
                             <CreateContact />
