@@ -4,8 +4,6 @@ import AppLogo from './app-logo'
 import { deleteToken, getToken } from '../actions/auth';
 import { useAuth } from '../actions/AuthContext';
 import { PowerIcon } from '@heroicons/react/24/outline';
-import { useRouter, usePathname } from 'next/navigation';
-// import {  } from 'next/navigation'
 
 
 const Navigation = () => {
@@ -13,15 +11,26 @@ const Navigation = () => {
     const [isLoggedIn, setIsLoggedIn] = useState(false);
     const [isOpen, setIsOpen] = useState(false);
     const menuRef = useRef<HTMLDivElement>(null);
-    const pathname = usePathname()
-    const router = useRouter();
     let accessToken = getToken();
+
 
     const toggleMenu = () => {
         setIsOpen(!isOpen);
     };
 
+    const closeMenu = () => {
+        setIsOpen(false);
+    };
+
+    // Close the menu when clicking outside of it
+    const handleClickOutside = (event: any) => {
+        if (menuRef.current && !menuRef.current.contains(event.target)) {
+            closeMenu();
+        }
+    };
+
     const handleLogout = (): void => {
+        console.log("clicked")
         setLogoutAuthState();
         deleteToken();
     }
@@ -30,13 +39,11 @@ const Navigation = () => {
         if (accessToken) {
             setLogInAuthState
             setIsLoggedIn(!!accessToken);
-            if (["/login", '/register'].includes(pathname)) router.replace("/contacts");
         } else {
             setLogoutAuthState();
             setIsLoggedIn(!!accessToken);
-            if (!["/login", '/register', '/'].includes(pathname)) router.replace("/contacts");
         }
-    }, [pathname, isAuthenticated, setIsLoggedIn, accessToken]);
+    }, [isAuthenticated, setIsLoggedIn, accessToken]);
 
     return (
         <nav className="p-6 fixed top-0 left-0 w-full z-50">
@@ -53,7 +60,7 @@ const Navigation = () => {
                 <ul className="hidden md:flex md:justify-center md:items-center space-x-4">
                     {isLoggedIn ? (
                         <>
-                            <li className='hover:text-orange-300'><a href="/contacts" className="">My Contacts</a></li>
+                            <li className='hover:text-blue-500'><a href="/contacts" className="">My Contacts</a></li>
                             <li>
                                 <button className='flex justify-between items-center cursor-pointer hover:text-red-300' onClick={handleLogout}>
                                     <span className='inline-block mr-2'>Logout</span>
@@ -63,33 +70,33 @@ const Navigation = () => {
                         </>
                     ) : (
                         <>
-                            <li className='hover:text-orange-300'><a href="/login" className="">Sign In</a></li>
-                            <li className='hover:text-orange-300'><a href="/register" className="">Create An Account</a></li>
+                            <li className='hover:text-blue-500'><a href="/login" className="">Sign In</a></li>
+                            <li className='hover:text-blue-500'><a href="/register" className="">Create An Account</a></li>
                         </>
                     )}
 
                 </ul>
-                {/* Mobile Menu */}
-                <div ref={menuRef} className={`${isOpen ? 'block' : 'hidden'} md:hidden mobile-menu fixed inset-0 z-50`}>
-                    <ul className="flex flex-col items-center justify-center h-full space-y-4">
-                        {isLoggedIn ? (
-                            <>
-                                <li className='hover:text-orange-300'><a href="/contacts" className="">My Contacts</a></li>
-                                <li>
-                                    <button className='flex justify-between items-center cursor-pointer hover:text-red-300' onClick={handleLogout}>
-                                        <span className='inline-block mr-2'>Logout</span>
-                                        <PowerIcon className="w-5 rounded-md border border-red-300  text-red-300  p-1 hover:bg-red-500 hover:text-white" />
-                                    </button>
-                                </li>
-                            </>
-                        ) : (
-                            <>
-                                <li className='hover:text-orange-300'><a href="/login" className="">Sign In</a></li>
-                                <li className='hover:text-orange-300'><a href="/register" className="text-blue">Create An Account</a></li>
-                            </>
-                        )}
-                    </ul>
-                </div>
+            </div>
+            {/* Mobile Menu */}
+            <div ref={menuRef} className="mobile-menu fixed inset-0 z-50 hidden">
+                {/* <ul className="flex flex-col items-center justify-center h-full space-y-4">
+                    {isLoggedIn ? (
+                        <>
+                            <li className='hover:text-blue-500'><a href="/contacts" className="">My Contacts</a></li>
+                            <li>
+                                <button className='flex justify-between items-center cursor-pointer hover:text-red-300' onClick={handleLogout}>
+                                    <span className='inline-block mr-2'>Logout</span>
+                                    <PowerIcon className="w-5 rounded-md border border-red-300  text-red-300  p-1 hover:bg-red-500 hover:text-white" />
+                                </button>
+                            </li>
+                        </>
+                    ) : (
+                        <>
+                            <li className='hover:text-blue-500'><a href="/login" className="">Sign In</a></li>
+                            <li className='hover:text-blue-500'><a href="/register" className="text-blue">Create An Account</a></li>
+                        </>
+                    )}
+                </ul> */}
             </div>
         </nav>
     )

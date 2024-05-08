@@ -3,11 +3,11 @@ import { useForm } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
 import * as yup from 'yup';
 import axios from 'axios';
-import { useEffect, useState } from 'react';
-import { usePathname, useRouter } from 'next/navigation';
+import { useState } from 'react';
+import { useRouter } from 'next/navigation';
+import { useFormStatus } from 'react-dom';
 import { ArrowRightIcon } from '@heroicons/react/24/outline';
-import { getToken } from '@/app/actions/auth';
-import { useAuth } from '@/app/actions/AuthContext';
+import { Button } from '../buttons';
 
 const schema = yup.object().shape({
     username: yup.string().required('Username is required'),
@@ -17,23 +17,9 @@ const schema = yup.object().shape({
 });
 
 const RegisterForm = () => {
-    const { isAuthenticated, setLogInAuthState, setLogoutAuthState } = useAuth();
     const router = useRouter();
-    const pathname = usePathname();
     const [error, setError] = useState('');
     const { register, handleSubmit, formState: { errors } } = useForm({ resolver: yupResolver(schema) });
-    const [isLoading, setIsLoading] = useState<boolean>(false);
-    const accessToken = getToken();
-
-    useEffect(() => {
-        if (accessToken) {
-            setLogInAuthState();
-            if (["/login", '/register'].includes(pathname)) router.replace("/contacts");
-        } else {
-            setLogoutAuthState();
-            if (!["/login", '/register', '/'].includes(pathname)) router.replace("/contacts");
-        }
-    }, [isAuthenticated, pathname, accessToken])
 
     const onSubmit = async (data: any, event: any) => {
         event.preventDefault();
@@ -41,23 +27,24 @@ const RegisterForm = () => {
             setError("Passwords don't match");
         }
         try {
-            setIsLoading(true);
             const response = await axios.post('http://localhost:4000/api/auth/register', data);
             const user = await response.data;
             if (user.username) {
                 setError('');
-                setIsLoading(false);
                 router.push('/login');
             } else {
-                setIsLoading(false);
+                // setSubmitting(false);
                 setError('Incorrect username or password');
+                // Clear password field
+                const usernameInput = document.getElementById('email') as HTMLInputElement | null;
+                if (usernameInput) {
+                    // usernameInput.focus();
+                }
             }
 
         } catch (error: any) {
-            setIsLoading(false);
+            // If an error occurs during form submission, set the error message
             setError(error.response.data.message);
-        } finally {
-            setIsLoading(false);
         }
     };
 
@@ -69,7 +56,7 @@ const RegisterForm = () => {
                 <input
                     {...register('username')}
                     className="bg-gray-50 border border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" placeholder="unique username" />
-                {errors.username && <p className='text-red-200 text-sm font-semi-bold'>{errors.username.message}</p>}
+                {errors.username && <p className='text-red-500 font-semi-bold'>{errors.username.message}</p>}
             </div>
             <div>
                 <label htmlFor="email" className="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Your email</label>
@@ -78,7 +65,7 @@ const RegisterForm = () => {
                     {...register('email')}
                     className="bg-gray-50 border border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
                     placeholder="name@company.com" />
-                {errors.email && <p className='text-red-200 text-sm font-semi-bold'>{errors.email.message}</p>}
+                {errors.email && <p className='text-red-500 font-semi-bold'>{errors.email.message}</p>}
             </div>
             <div>
                 <label htmlFor="password" className="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Password</label>
@@ -86,27 +73,35 @@ const RegisterForm = () => {
                     type="password" {...register('password')}
                     placeholder="••••••••" className="bg-gray-50 border border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
                 />
-                {errors.password && <p className='text-red-200 text-sm font-semi-bold'>{errors.password.message}</p>}
+                {errors.password && <p className='text-red-500 font-semi-bold'>{errors.password.message}</p>}
             </div>
             <div>
                 <label htmlFor="confirm_password" className="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Confirm Password</label>
                 <input
                     type="password" {...register('confirm_password')}
                     placeholder="••••••••" className="bg-gray-50 border border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" />
-                {errors.confirm_password && <p className='text-red-200 text-sm font-semi-bold'>{errors.confirm_password.message}</p>}
+                {errors.confirm_password && <p className='text-red-500 font-semi-bold'>{errors.confirm_password.message}</p>}
             </div>
 
-            {error && <p className='text-red-200 font-semibold my-3'>{error}</p>}
-            <button type="submit" className="flex w-full justify-center rounded-md bg-indigo-600 px-5 py-1.5 text-sm font-semibold leading-6 text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600">
-                Sign Up
-                <ArrowRightIcon className={`ml-auto h-5 w-5 text-gray-50 ${isLoading ? 'animate-ping' : ''}`} />
-            </button>
+            {error && <p style={{ color: 'red' }}>{error}</p>}
+            <RegisterButton />
+            {/* <button type="submit" className="w-full text-white bg-primary-600 hover:bg-primary-700 focus:ring-4 focus:outline-none focus:ring-primary-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-primary-600 dark:hover:bg-primary-700 dark:focus:ring-primary-800">Sign in</button> */}
 
             <p className="text-sm font-light text-gray-500 dark:text-gray-400">
-                Alredy a user? <a href="/login" className="font-medium text-orange-600 hover:underline dark:text-orange-500">Sign Into your account</a>
+                Alredy a user? <a href="/login" className="font-medium text-primary-600 hover:underline dark:text-blue-500">Sign Into your account</a>
             </p>
         </form>
     )
 }
 
 export default RegisterForm
+
+function RegisterButton({ value = "Register" }: { value?: string }) {
+    const { pending } = useFormStatus();
+
+    return (
+        <Button className="mt-4 w-full" aria-disabled={pending}>
+            {value} <ArrowRightIcon className="ml-auto h-5 w-5 text-gray-50" />
+        </Button>
+    );
+}

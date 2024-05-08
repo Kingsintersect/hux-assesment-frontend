@@ -1,8 +1,6 @@
-import { CardSkeleton, Widget } from "@/app/ui/Skeletons";
 import Breadcrumbs from "@/app/ui/breadcrumbs";
 import EditContactForm from "@/app/ui/contacts/EditContactForm";
 import { Metadata } from "next";
-import { Suspense } from "react";
 
 export const metadata: Metadata = {
     title: 'Edit Contact',
@@ -12,14 +10,14 @@ const EditContactPage = async ({ params }: { params: { id: string } }) => {
     const id = params.id;
 
     return (
-        <main className='max-w-md mx-auto md:max-w-2xl mt-24'>
-            <div className="flex flex-col items-center justify-center px-6 py-8 mx-auto rounded-2xl shadow-sm shadow-orange-400">
-                <h1 className='text-2xl mb-7 text-orange-300'>Edit Contact</h1>
+        <main className='max-w-md mx-auto  rounded-xl shadow-md overflow-hidden md:max-w-2xl pt-28'>
+            <div className="flex flex-col items-center justify-start px-6 py-8 mx-auto md:h-screen lg:py-0">
+                <h1 className='text-2xl mb-7'>Edite Contact</h1>
                 <div className='flex-auto w-full'>
                     <div className='max-w-md mx-auto'>
                         <Breadcrumbs
                             breadcrumbs={[
-                                { label: 'Contacts', href: '/contacts' },
+                                { label: 'contacts', href: '/contacts' },
                                 {
                                     label: 'Edit Contact',
                                     href: `/contacts/${id}/edit`,
@@ -28,8 +26,7 @@ const EditContactPage = async ({ params }: { params: { id: string } }) => {
                             ]}
                         />
                     </div>
-                    <Suspense key={'query' + 'currentPage'} fallback={<CardSkeleton />}>
-                        <EditContactForm contactId={id} /></Suspense>
+                    <EditContactForm contactId={id} />
                 </div>
             </div>
         </main>
