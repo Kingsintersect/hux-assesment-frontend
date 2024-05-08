@@ -16,3 +16,13 @@ const Spinner = () => {
 }
 
 export default Spinner
+
+
+
+export const SvgSpinner = ({ size = 24, color = '#000', thickness = 2 }) => {
+    return (
+
+        <div className='p-3 rounded-full border-4 border-orange-500 border-r-blue-700 animate-spin'></div>
+    );
+};
+

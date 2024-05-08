@@ -1,6 +1,6 @@
 'use client';
 import { useEffect, useState } from 'react';
-import { useRouter } from 'next/navigation';
+import { usePathname, useRouter } from 'next/navigation';
 import { CreateContact, DeleteContact, UpdateContact, ViewContact, } from '../contacts/buttons';
 import { lusitana } from '../fonts';
 import axios from 'axios';
@@ -10,6 +10,7 @@ import { getToken } from '@/app/actions/auth';
 import { useAuth } from '@/app/actions/AuthContext';
 import { UserCircleIcon } from '@heroicons/react/24/outline';
 import Link from 'next/link';
+import { SvgSpinner } from '../Spinner';
 
 const ContactListTable = () => {
     const { isAuthenticated, setLogoutAuthState } = useAuth();
@@ -17,9 +18,15 @@ const ContactListTable = () => {
     const [contacts, setContacts] = useState<Contact[]>([]);
     const [error, setError] = useState('');
     const router = useRouter();
+    const pathname = usePathname()
     const accessToken = getToken();
 
     useEffect(() => {
+        if (accessToken) {
+            if (["/login", '/register'].includes(pathname)) router.replace("/contacts");
+        } else {
+            if (!["/login", '/register', '/'].includes(pathname)) router.replace("/contacts");
+        }
         const fetchContacts = async () => {
             if (accessToken) {
                 try {
@@ -47,7 +54,7 @@ const ContactListTable = () => {
         };
 
         fetchContacts();
-    }, [isAuthenticated, accessToken]);
+    }, [isAuthenticated, pathname, accessToken]);
 
     const handleDelete = async (id: string) => {
         setIsLoading(true);
@@ -63,19 +70,25 @@ const ContactListTable = () => {
         }
     }
 
+    const handleDetails = (id: string) => {
+        setIsLoading(true);
+        router.push(`contacts/${id}/edit`)
+    }
+
     return (
         <>
-            <div className='py-20'>
+            <div className=''>
                 <header className='text-center'>
-                    <h1 className={`${lusitana.className} text-2xl mb-3`}>Lists Of Your Contacts</h1>
-                    <p>This route is ContactsPage. Only accessible when logged in.</p>
-                    {error && <p className='text-red-400'>{error}</p>}
+                    <h1 className={`${lusitana.className} text-2xl mb-3 text-orange-300`}>Lists Of Your Contacts</h1>
+                    <p className='text-orange-100'>This route is ContactsPage. Only accessible when logged in.</p>
+                    {error && <p className='text-red-400 mt-5'>{error}</p>}
                 </header>
 
                 <div className='overflow-hidden mt-10'>
                     <div className="relative overflow-x-auto shadow-md sm:rounded-lg">
                         <div className='flex flex-column sm:flex-row flex-wrap space-y-4 sm:space-y-0 items-center justify-between pb-4 mb-5'>
                             <CreateContact />
+                            {isLoading && <SvgSpinner />}
                         </div>
                         <table className="w-full text-sm text-left rtl:text-right text-gray-500 dark:text-gray-400">
                             <thead className="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
@@ -99,14 +112,13 @@ const ContactListTable = () => {
                             </thead>
                             <tbody>
                                 {contacts?.map((contact) => (
-                                    // <Link href={`/contacts/${contact._id}/details`} className='unset inline'>
-                                    <tr key={contact._id} className="bg-white border-b dark:bg-gray-800 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600 cursor-pointer">
-                                        <th scope="row" className="px-6 font-medium text-gray-900 whitespace-nowrap dark:text-white">
+                                    <tr onClick={() => handleDetails(contact._id)} key={contact._id} className="bg-white border-b dark:bg-gray-800 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600 cursor-pointer">
+                                        <td scope="row" className="px-6 font-medium text-gray-900 whitespace-nowrap dark:text-white">
                                             <UserCircleIcon />
-                                        </th>
-                                        <th scope="row" className="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white">
+                                        </td>
+                                        <td scope="row" className="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white">
                                             {contact.firstName}
-                                        </th>
+                                        </td>
                                         <td className="px-6 py-4">
                                             {contact.lastName}
                                         </td>
@@ -119,7 +131,6 @@ const ContactListTable = () => {
                                             <DeleteContact isLoading={isLoading} handleDelete={handleDelete} id={contact._id} />
                                         </td>
                                     </tr>
-                                    // </Link>
                                 ))}
                             </tbody>
                         </table>
