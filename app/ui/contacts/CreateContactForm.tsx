@@ -4,8 +4,10 @@ import { yupResolver } from "@hookform/resolvers/yup";
 import * as yup from 'yup';
 import axios from 'axios';
 import { useRouter } from "next/navigation";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
+import { useAuth } from "@/app/actions/AuthContext";
+import { getToken } from "@/app/actions/auth";
 
 const schema = yup.object().shape({
     firstName: yup.string().required('First Name is required'),
@@ -14,11 +16,23 @@ const schema = yup.object().shape({
 });
 
 const CreateContactForm = () => {
+    const { isAuthenticated, setLogoutAuthState } = useAuth();
     const router = useRouter();
     const { register, handleSubmit, formState: { errors } } = useForm({ resolver: yupResolver(schema) });
-    // const [contact, setContacts] = useState<Contact>();
-    const { accessToken, setAccessToken } = useAccessToken();
     const [error, setError] = useState('');
+    const accessToken = getToken();
+
+    useEffect(() => {
+        const validateToken = async () => {
+            if (!accessToken) {
+                setError('No token found.');
+                setLogoutAuthState();
+                router.push('/login');
+            }
+        };
+
+        validateToken();
+    }, [isAuthenticated, accessToken]);
 
     const onSubmit = async (data: any, event: any) => {
         event.preventDefault();
@@ -33,16 +47,18 @@ const CreateContactForm = () => {
                 if (value.phoneNumber) {
                     setError('');
                     router.push('/contacts');
-                    // return true;
                 } else {
                     // setSubmitting(false);
                     setError('Incorrect Credentials');
                 }
 
             } catch (error: any) {
-                // If an error occurs during form submission, set the error message
                 setError(error.response.data.message);
             }
+        } else {
+            setError('No token found.');
+            setLogoutAuthState();
+            router.push('/login');
         }
     };
 

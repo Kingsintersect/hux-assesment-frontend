@@ -49,12 +49,15 @@ You can then use the contact management features to add, view, update, and delet
 
 To logout, simply click on the logout button
 
+- NOTE  token is valid only for 1 Hour before it expires;
+
 
 ## Technologies Used
 NextJS -> the fronend framework
 TailwindCSS -> styling hte application
 Yup -> for validating form imputs before making a request
 Axios -> fetching making API requests to the backend
+Hero Icons
 
 
 ## Learn More

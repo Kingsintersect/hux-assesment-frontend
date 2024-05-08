@@ -6,6 +6,7 @@ import { AccessTokenProvider } from './actions/accessTokenContext';
 import { inter } from './ui/fonts';
 import type { Metadata } from "next";
 import "./globals.css";
+import { AuthProvider } from './actions/AuthContext';
 
 export const metadata: Metadata = {
   title: {
@@ -23,12 +24,13 @@ const RootLayout: React.FC<RootLayoutProps> = ({ children }) => {
   return (
     <html lang="en">
       <body className={inter.className}>
-        <div className="flex min-h-screen flex-col items-center justify-between pb-10">
-          <Navigation />
-          {/* Wrap the content with AccessTokenProvider */}
-          <AccessTokenProvider>
-            {children}
-          </AccessTokenProvider>
+        <div className="min-h-screen">
+          <AuthProvider>
+            <AccessTokenProvider>
+              <Navigation />
+              {children}
+            </AccessTokenProvider>
+          </AuthProvider>
         </div>
       </body>
     </html>

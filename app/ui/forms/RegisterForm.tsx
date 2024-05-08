@@ -7,7 +7,7 @@ import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { useFormStatus } from 'react-dom';
 import { ArrowRightIcon } from '@heroicons/react/24/outline';
-import { Button } from '../buton';
+import { Button } from '../buttons';
 
 const schema = yup.object().shape({
     username: yup.string().required('Username is required'),

@@ -1,5 +1,6 @@
 'use client';
 import React, { createContext, useContext, useState, useEffect } from 'react';
+import { getToken } from './auth';
 
 interface AccessTokenContextType {
     accessToken: string;
@@ -7,7 +8,7 @@ interface AccessTokenContextType {
 }
 
 const AccessTokenContext = createContext<AccessTokenContextType>({
-    accessToken: '',
+    accessToken: getToken() || "",
     setAccessToken: () => { },
 });
 

@@ -1,26 +1,35 @@
 'use client';
 
 import { ArrowRightIcon } from '@heroicons/react/20/solid';
-import { Button } from '../buton';
+import { Button } from '../buttons';
 import { useFormStatus } from 'react-dom';
-import { useForm, useFormState } from 'react-hook-form';
+import { useForm } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
 import * as yup from 'yup';
 import axios from 'axios';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
+import { useAuth } from '@/app/actions/AuthContext';
+import { getToken } from '@/app/actions/auth';
 
 const schema = yup.object().shape({
     email: yup.string().email('Invalid email').required('Email is required'),
     password: yup.string().required('Password is required'),
 });
 
-
-
 export default function LoginForm() {
-    const router = useRouter();
+    const { isAuthenticated, setLogInAuthState } = useAuth();
     const [error, setError] = useState('');
     const { register, handleSubmit, formState: { errors } } = useForm({ resolver: yupResolver(schema) });
+    const router = useRouter();
+    const accessToken = getToken();
+
+    useEffect(() => {
+        if (accessToken) {
+            setLogInAuthState();
+            router.push("/contacts")
+        }
+    }, [isAuthenticated, accessToken])
 
     const onSubmit = async (data: any, event: any) => {
         event.preventDefault();
@@ -28,24 +37,14 @@ export default function LoginForm() {
             const response = await axios.post('http://localhost:4000/api/auth/login', data);
             const value = await response.data;
             if (value.access_token) {
-                setError('');
                 localStorage.setItem("accessToken", value.access_token);
-                // setSubmitting(false);
-                // redirect
-                router.push('/contacts');
-                return true;
+                setError('');
+                setLogInAuthState()
+                // router.push('/contacts');
             } else {
-                // setSubmitting(false);
                 setError('Incorrect Credentials');
-                // Clear password field
-                const usernameInput = document.getElementById('email') as HTMLInputElement | null;
-                if (usernameInput) {
-                    usernameInput.focus();
-                }
             }
-
         } catch (error: any) {
-            // If an error occurs during form submission, set the error message
             setError(error.response.data.message);
         }
     };

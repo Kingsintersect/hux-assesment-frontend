@@ -1,5 +1,4 @@
 'use client';
-import { useAccessToken } from '@/app/actions/accessTokenContext';
 import { getSingleUserRequest } from '@/app/actions/action';
 import { useEffect, useState } from 'react';
 import { Contact } from '@/app/actions/Types';
@@ -8,6 +7,8 @@ import { yupResolver } from '@hookform/resolvers/yup';
 import * as yup from 'yup';
 import axios from 'axios';
 import { useForm } from 'react-hook-form';
+import { useAuth } from '@/app/actions/AuthContext';
+import { getToken } from '@/app/actions/auth';
 
 const schema = yup.object().shape({
     firstName: yup.string().required('First Name is required'),
@@ -16,11 +17,12 @@ const schema = yup.object().shape({
 });
 
 export default function EditInvoiceForm({ contactId }: { contactId: string; }) {
+    const { isAuthenticated, setLogoutAuthState } = useAuth();
     const router = useRouter();
     const { register, handleSubmit, formState: { errors } } = useForm({ resolver: yupResolver(schema) });
     const [contact, setContacts] = useState<Contact | null>();
-    const { accessToken, setAccessToken } = useAccessToken();
     const [error, setError] = useState('');
+    const accessToken = getToken();
 
     useEffect(() => {
         const fetchContact = async () => {
@@ -32,11 +34,15 @@ export default function EditInvoiceForm({ contactId }: { contactId: string; }) {
                     setError("");
                     console.error('Error fetching contact:', error);
                 }
+            } else {
+                setError('No token found.');
+                setLogoutAuthState();
+                router.push('/login');
             }
         };
 
         fetchContact();
-    }, [accessToken]);
+    }, [isAuthenticated, accessToken]);
 
     const onSubmit = async (data: any, event: any) => {
         event.preventDefault();
