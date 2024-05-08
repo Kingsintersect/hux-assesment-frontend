@@ -3,14 +3,11 @@ import React, { useState, useRef, useEffect } from 'react';
 import AppLogo from './app-logo'
 import { deleteToken, getToken } from '../actions/auth';
 import { useAuth } from '../actions/AuthContext';
-import { useRouter } from 'next/navigation';
 import { PowerIcon } from '@heroicons/react/24/outline';
-// import {useSession} 
 
 
 const Navigation = () => {
     const { isAuthenticated, setLogoutAuthState, setLogInAuthState } = useAuth();
-    const router = useRouter(); ''
     const [isLoggedIn, setIsLoggedIn] = useState(false);
     const [isOpen, setIsOpen] = useState(false);
     const menuRef = useRef<HTMLDivElement>(null);
@@ -37,14 +34,8 @@ const Navigation = () => {
         setLogoutAuthState();
         deleteToken();
     }
-    // Attach click event listener to the document to handle clicks outside the menu
+
     useEffect(() => {
-        // if (typeof window !== 'undefined') {
-        //     setIsLoggedIn(!!accessToken); router
-        // }
-
-
-        // const fetchContact = async () => {
         if (accessToken) {
             setLogInAuthState
             setIsLoggedIn(!!accessToken);
@@ -52,12 +43,7 @@ const Navigation = () => {
             setLogoutAuthState();
             setIsLoggedIn(!!accessToken);
         }
-        // };
-
-        // fetchContact();
     }, [isAuthenticated, setIsLoggedIn, accessToken]);
-
-
 
     return (
         <nav className="p-6 fixed top-0 left-0 w-full z-50">

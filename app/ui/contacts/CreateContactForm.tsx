@@ -8,6 +8,7 @@ import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import { useAuth } from "@/app/actions/AuthContext";
 import { getToken } from "@/app/actions/auth";
+import Spinner from "../Spinner";
 
 const schema = yup.object().shape({
     firstName: yup.string().required('First Name is required'),
@@ -20,6 +21,7 @@ const CreateContactForm = () => {
     const router = useRouter();
     const { register, handleSubmit, formState: { errors } } = useForm({ resolver: yupResolver(schema) });
     const [error, setError] = useState('');
+    const [isLoading, setIsLoading] = useState<boolean>(false);
     const accessToken = getToken();
 
     useEffect(() => {
@@ -37,6 +39,7 @@ const CreateContactForm = () => {
     const onSubmit = async (data: any, event: any) => {
         event.preventDefault();
         if (accessToken) {
+            setIsLoading(true);
             try {
                 const response = await axios.post(`http://localhost:4000/api/contacts`, data, {
                     headers: {
@@ -46,14 +49,17 @@ const CreateContactForm = () => {
                 const value = await response.data;
                 if (value.phoneNumber) {
                     setError('');
+                    setIsLoading(false)
                     router.push('/contacts');
                 } else {
-                    // setSubmitting(false);
+                    setIsLoading(false)
                     setError('Incorrect Credentials');
                 }
 
             } catch (error: any) {
                 setError(error.response.data.message);
+            } finally {
+                setIsLoading(false)
             }
         } else {
             setError('No token found.');
@@ -87,7 +93,10 @@ const CreateContactForm = () => {
                 {errors.phoneNumber && <p className='text-red-500 font-semi-bold'>{errors.phoneNumber.message}</p>}
             </div>
             {error && <p className='text-red-400 font-semibold'>{error}</p>}
-            <button type="submit" className="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm w-full sm:w-auto px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800">Submit</button>
+            <button type="submit" className="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm w-full sm:w-auto px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800">
+                {isLoading && <Spinner />}
+                Submit
+            </button>
         </form>
     )
 }
