@@ -37,9 +37,7 @@ const RegisterForm = () => {
 
     const onSubmit = async (data: any, event: any) => {
         event.preventDefault();
-        console.log(data);
         if (data.password !== data.confirm_password) {
-            console.log("didt match")
             setError("Passwords don't match");
         }
         try {

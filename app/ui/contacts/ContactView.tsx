@@ -37,7 +37,6 @@ const ContactView = ({ contactId }: { contactId: string; }) => {
                     setContacts(contact)
                 } catch (error) {
                     setError("");
-                    console.error('Error fetching contact:', error);
                 }
             } else {
                 setError('No token found.');
