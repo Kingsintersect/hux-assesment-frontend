@@ -1,3 +1,4 @@
+import { CardSkeleton, Widget } from "@/app/ui/Skeletons";
 import Breadcrumbs from "@/app/ui/breadcrumbs";
 import EditContactForm from "@/app/ui/contacts/EditContactForm";
 import { Metadata } from "next";
@@ -29,7 +30,7 @@ const EditContactPage = async ({ params }: { params: { id: string } }) => {
                                     ]}
                                 />
                             </div>
-                            <Suspense key={'query' + 'currentPage'} fallback={<div>Loading...</div>}>
+                            <Suspense key={'query' + 'currentPage'} fallback={<CardSkeleton />}>
                                 <EditContactForm contactId={id} /></Suspense>
                         </div>
                     </div>

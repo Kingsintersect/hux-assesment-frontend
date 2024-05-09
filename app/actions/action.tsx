@@ -1,4 +1,5 @@
 import axios from "axios";
+import { deleteToken } from "./auth";
 
 export const getSingleUserRequest = async (id: string, accessToken: string) => {
     try {
@@ -12,7 +13,8 @@ export const getSingleUserRequest = async (id: string, accessToken: string) => {
         } else {
             throw new Error("Request failed with status code:")
         }
-    } catch (error) {
+    } catch (error: any) {
+        if (error.response.data.message === "Unauthorized") deleteToken();
         throw new Error('Failed to fetch contacts.');
     }
 }
@@ -30,7 +32,8 @@ export const deleteContactRequest = async (id: string, accessToken: string) => {
         } else {
             throw new Error("Request failed with status code:")
         }
-    } catch (error) {
+    } catch (error: any) {
+        if (error.response.data.message === "Unauthorized") deleteToken();
         throw new Error('Failed to fetch contacts.');
     }
 }

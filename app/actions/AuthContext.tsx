@@ -1,5 +1,6 @@
 'use client';
 import { ReactNode, createContext, useContext, useState } from 'react';
+import { deleteToken } from './auth';
 
 interface AuthContextType {
     isAuthenticated: boolean;
@@ -25,6 +26,7 @@ export const AuthProvider: React.FC<AuthProp> = ({ children }) => {
     };
 
     const setLogoutAuthState = () => {
+        deleteToken();
         setIsAuthenticated(false);
     };
 

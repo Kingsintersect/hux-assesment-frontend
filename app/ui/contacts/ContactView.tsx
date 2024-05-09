@@ -5,7 +5,7 @@ import React, { useEffect, useState } from 'react'
 import { UserCircleIcon } from '@heroicons/react/24/outline';
 import { DeleteContact } from './buttons';
 import { getToken } from '@/app/actions/auth';
-import { useRouter } from 'next/navigation';
+import { usePathname, useRouter } from 'next/navigation';
 import { useAuth } from '@/app/actions/AuthContext';
 
 const ContactInitialState = {
@@ -20,10 +20,16 @@ const ContactView = ({ contactId }: { contactId: string; }) => {
     const [contact, setContacts] = useState<Contact>(ContactInitialState);
     const [error, setError] = useState('');
     const router = useRouter();
+    const pathname = usePathname()
     const accessToken = getToken();
 
 
     useEffect(() => {
+        if (accessToken) {
+            if (["/login", '/register'].includes(pathname)) router.replace("/contacts");
+        } else {
+            if (!["/login", '/register', '/'].includes(pathname)) router.replace("/contacts");
+        }
         const fetchContact = async () => {
             if (accessToken) {
                 try {
@@ -40,7 +46,7 @@ const ContactView = ({ contactId }: { contactId: string; }) => {
         };
 
         fetchContact();
-    }, [isAuthenticated, accessToken]);
+    }, [isAuthenticated, pathname, accessToken]);
 
     const handleDelete = async (id: string) => {
         setIsLoading(true);
@@ -68,7 +74,6 @@ const ContactView = ({ contactId }: { contactId: string; }) => {
 
                     <div className="flex mt- md:mt-10">
                         {contact!._id && <DeleteContact isLoading={isLoading} handleDelete={handleDelete} id={contact._id} defaultType='big' />}
-                        {/* <a href="#" className="w-full inline-flex items-center px-4 py-2 text-sm font-medium text-center text-white bg-red-700 rounded-lg hover:bg-red-800 focus:ring-4 focus:outline-none focus:ring-red-300 dark:bg-red-600 dark:hover:bg-red-700 dark:focus:ring-red-800">Delete Contact ?</a> */}
                     </div>
                 </div>
             </div>
