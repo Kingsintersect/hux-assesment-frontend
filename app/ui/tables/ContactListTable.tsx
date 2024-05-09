@@ -9,7 +9,6 @@ import { deleteContactRequest } from '@/app/actions/action';
 import { getToken } from '@/app/actions/auth';
 import { useAuth } from '@/app/actions/AuthContext';
 import { UserCircleIcon } from '@heroicons/react/24/outline';
-import Link from 'next/link';
 import { SvgSpinner } from '../Spinner';
 
 const ContactListTable = () => {
@@ -112,7 +111,7 @@ const ContactListTable = () => {
                             </thead>
                             <tbody>
                                 {contacts?.map((contact) => (
-                                    <tr onClick={() => handleDetails(contact._id)} key={contact._id} className="bg-white border-b dark:bg-gray-800 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600 cursor-pointer">
+                                    <tr key={contact._id} className="bg-white border-b dark:bg-gray-800 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600 cursor-pointer">
                                         <td scope="row" className="px-6 font-medium text-gray-900 whitespace-nowrap dark:text-white">
                                             <UserCircleIcon />
                                         </td>
