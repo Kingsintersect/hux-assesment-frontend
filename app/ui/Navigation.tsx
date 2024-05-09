@@ -22,11 +22,14 @@ const Navigation = () => {
     };
 
     const handleLogout = (): void => {
-        setLogoutAuthState();
         deleteToken();
+        setIsLoggedIn(false);
+        setLogoutAuthState();
+        // router.push("/");
     }
 
     useEffect(() => {
+        console.log(accessToken, 'nav')
         if (accessToken) {
             setLogInAuthState
             setIsLoggedIn(!!accessToken);
@@ -34,7 +37,7 @@ const Navigation = () => {
         } else {
             setLogoutAuthState();
             setIsLoggedIn(!!accessToken);
-            if (!["/login", '/register', '/'].includes(pathname)) router.replace("/contacts");
+            if (!["/login", '/register', '/'].includes(pathname)) router.replace("/login");
         }
     }, [pathname, isAuthenticated, setIsLoggedIn, accessToken]);
 

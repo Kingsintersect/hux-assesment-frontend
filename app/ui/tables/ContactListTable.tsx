@@ -6,7 +6,7 @@ import { lusitana } from '../fonts';
 import axios from 'axios';
 import { Contact } from '@/app/actions/Types';
 import { deleteContactRequest } from '@/app/actions/action';
-import { getToken } from '@/app/actions/auth';
+import { deleteToken, getToken } from '@/app/actions/auth';
 import { useAuth } from '@/app/actions/AuthContext';
 import { UserCircleIcon } from '@heroicons/react/24/outline';
 import { SvgSpinner } from '../Spinner';
@@ -24,7 +24,7 @@ const ContactListTable = () => {
         if (accessToken) {
             if (["/login", '/register'].includes(pathname)) router.replace("/contacts");
         } else {
-            if (!["/login", '/register', '/'].includes(pathname)) router.replace("/contacts");
+            if (!["/login", '/register', '/'].includes(pathname)) router.replace("/login");
         }
         const fetchContacts = async () => {
             if (accessToken) {
@@ -34,6 +34,7 @@ const ContactListTable = () => {
                             'Authorization': `Bearer ${accessToken}`
                         }
                     });
+
                     if (response.status >= 200 && response.status < 300) {
                         setError('');
                         if (response.data.length < 1) { setError("You don't have any record yet !"); }
@@ -41,12 +42,14 @@ const ContactListTable = () => {
                     } else {
                         setError(response.data.message)
                     }
-                } catch (error) {
+                } catch (error: any) {
                     setError('Token is invalid. Please log in again.');
+                    if (error.response.data.message === "Unauthorized") deleteToken();
                 }
             } else {
                 setError('No token found.');
                 setLogoutAuthState();
+                deleteToken();
                 router.push('/login');
             }
 
@@ -62,7 +65,8 @@ const ContactListTable = () => {
             if (!accessToken) throw new Error("Access token not found!")
             const result = await deleteContactRequest(id, accessToken);
             if (result.success) setError(''), setContacts(prevContacts => prevContacts.filter(contact => contact._id !== id));
-        } catch (error) {
+        } catch (error: any) {
+            if (error.response.data.message === "Unauthorized") deleteToken();
             setError("Internal Server Problem")
         } finally {
             setIsLoading(false);
@@ -110,7 +114,7 @@ const ContactListTable = () => {
                                 </tr>
                             </thead>
                             <tbody>
-                                {contacts?.map((contact) => (
+                                {contacts?.toReversed().map((contact) => (
                                     <tr key={contact._id} className="bg-white border-b dark:bg-gray-800 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600 cursor-pointer">
                                         <td scope="row" className="px-6 font-medium text-gray-900 whitespace-nowrap dark:text-white">
                                             <UserCircleIcon />

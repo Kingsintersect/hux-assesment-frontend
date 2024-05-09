@@ -27,7 +27,7 @@ export default function EditInvoiceForm({ contactId }: { contactId: string; }) {
     const { isAuthenticated, setLogoutAuthState } = useAuth();
     const router = useRouter();
     const pathname = usePathname();
-    const { register, setValue, handleSubmit, formState: { errors } } = useForm<ContactForm>({ resolver: yupResolver(schema) });
+    const { register, setValue, reset, handleSubmit, formState: { errors } } = useForm<ContactForm>({ resolver: yupResolver(schema) });
     const [contact, setContacts] = useState<Contact | null>();
     const [error, setError] = useState('');
     const [isLoading, setIsLoading] = useState<boolean>(false);
@@ -37,16 +37,17 @@ export default function EditInvoiceForm({ contactId }: { contactId: string; }) {
         if (accessToken) {
             if (["/login", '/register'].includes(pathname)) router.replace("/contacts");
         } else {
-            if (!["/login", '/register', '/'].includes(pathname)) router.replace("/contacts");
+            if (!["/login", '/register', '/'].includes(pathname)) router.replace("/login");
         }
         const fetchContact = async () => {
             if (accessToken) {
                 try {
                     const contact = await getSingleUserRequest(contactId, accessToken);
-                    setContacts(contact)
-                    setValue("firstName", contact.firstName)
-                    setValue("lastName", contact.lastName)
-                    setValue("phoneNumber", contact.phoneNumber)
+                    setContacts(contact);
+                    reset();
+                    // setValue("firstName", contact.firstName)
+                    // setValue("lastName", contact.lastName)
+                    // setValue("phoneNumber", contact.phoneNumber)
                 } catch (error) {
                     setError("");
                 }

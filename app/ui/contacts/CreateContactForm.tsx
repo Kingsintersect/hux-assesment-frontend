@@ -7,7 +7,7 @@ import { usePathname, useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import { useAuth } from "@/app/actions/AuthContext";
-import { getToken } from "@/app/actions/auth";
+import { deleteToken, getToken } from "@/app/actions/auth";
 import Spinner from "../Spinner";
 
 const schema = yup.object().shape({
@@ -52,11 +52,12 @@ const CreateContactForm = () => {
                     setIsLoading(false)
                     router.push('/contacts');
                 } else {
-                    setIsLoading(false)
+                    setIsLoading(false);
                     setError('Incorrect Credentials');
                 }
 
             } catch (error: any) {
+                if (error.response.data.message === "Unauthorized") deleteToken();
                 setError(error.response.data.message);
             } finally {
                 setIsLoading(false)
