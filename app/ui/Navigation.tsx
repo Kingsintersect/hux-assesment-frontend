@@ -41,7 +41,7 @@ const Navigation = () => {
     }, [pathname, isAuthenticated, setIsLoggedIn, accessToken]);
 
     return (
-        <nav className="p-6 fixed top-0 left-0 w-full z-50">
+        <nav className="p-6 fixed top-0 left-0 w-full z-50 bg-[#192c61fc]">
 
             <div className="container mx-auto flex justify-between items-center">
                 <div className="">
@@ -72,8 +72,8 @@ const Navigation = () => {
 
                 </ul>
                 {/* Mobile Menu */}
-                <div ref={menuRef} className={`${isOpen ? 'block' : 'hidden'} md:hidden mobile-menu fixed inset-0 z-50`}>
-                    <ul className="flex flex-col items-center justify-center h-full space-y-4">
+                <div ref={menuRef} className={`${isOpen ? 'block' : 'hidden'} md:hidden mobile-menu absolute inset-0 -z-10 `}>
+                    <ul className="flex flex-col items-center justify-center h-full space-y-4 bg-[#192c61fc] " style={{ position: "relative", top: "90px" }}>
                         {isLoggedIn ? (
                             <>
                                 <li className='hover:text-orange-300'><a href="/contacts" className="">My Contacts</a></li>
@@ -86,8 +86,8 @@ const Navigation = () => {
                             </>
                         ) : (
                             <>
-                                <li className='hover:text-orange-300'><a href="/login" className="">Sign In</a></li>
-                                <li className='hover:text-orange-300'><a href="/register" className="text-blue">Create An Account</a></li>
+                                <li onClick={toggleMenu} className='hover:text-orange-300'><a href="/login" className="">Sign In</a></li>
+                                <li onClick={toggleMenu} className='hover:text-orange-300'><a href="/register" className="text-blue">Create An Account</a></li>
                             </>
                         )}
                     </ul>
