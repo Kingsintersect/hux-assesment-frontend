@@ -1,6 +1,6 @@
-import Breadcrumbs from '@/app/ui/breadcrumbs'
-import ContactView from '@/app/ui/contacts/ContactView'
-import React, { Suspense } from 'react'
+import Breadcrumbs from '@/app/ui/breadcrumbs';
+import ContactView from '@/app/ui/contacts/ContactView';
+import React, { Suspense } from 'react';
 
 const ContactDetailsPage = ({ params }: { params: { id: string } }) => {
     const id = params.id;
@@ -35,4 +35,4 @@ const ContactDetailsPage = ({ params }: { params: { id: string } }) => {
     )
 }
 
-export default ContactDetailsPage
+export default ContactDetailsPage;
